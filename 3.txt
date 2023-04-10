@@ -1,0 +1,185 @@
+package process_control;
+
+import java.util.Scanner;
+public class Process_control3 {
+    public static void main(String[] args) {
+        Process_control3 c=new Process_control3();
+        c.menu();
+    }
+    public  void menu(){
+        Process_control3 c=new Process_control3();
+        Scanner input = new Scanner(System.in);
+        set();
+        System.out.println("index  *  adr  *  end  *  size  ");
+        System.out.println("  "+a[0]+"        "+adr[0]+"     "+end[0]+"   "+size[0]);
+        System.out.println("input the way (best or first)");
+        String way= input.next();
+        String be="best";
+        String fi="first";
+        if(way.equals(be)){
+            best();
+        }
+        if(way.equals(fi)){
+            first();
+        }
+    }
+    public void set() {
+        a[0] = 1;
+        adr[0] = 0;
+        end[0] = 32766;
+        size[0] = 32767;
+    }
+    public void best(){
+        Scanner input = new Scanner(System.in);
+        n=n+1;
+        if(n!=0) {
+            print();
+        }
+        System.out.println("Assign or Accept(as or ac)");
+        String found= input.next();
+        String assign="as";
+        String accept="ac";
+        if(found.equals(assign)){
+            bas();
+            best();
+        }
+        if(found.equals(accept)){
+            bac();
+            best();
+        }
+    }
+    public void first(){
+        Scanner input = new Scanner(System.in);
+        n=n+1;
+        if(n!=0) {
+            print();
+        }
+        System.out.println("Assign or Accept(as or ac)");
+        String found= input.next();
+        String assign="as";
+        String accept="ac";
+        if(found.equals(assign)){
+            fas();
+            first();
+        }
+        if(found.equals(accept)){
+            fac();
+            first();
+        }
+    }
+    public void bas(){
+        Scanner input = new Scanner(System.in);
+        System.out.println("input Application");
+        int allocation=input.nextInt();
+        int yu=size[0]-allocation;
+        int y=0;
+        for(int i=0;a[i]!=0;i++){
+            if(yu<size[i]-allocation){
+                yu=size[i]-allocation;
+            }
+        }
+        for(int i=0;a[i]!=0;i++){
+            if((0<=size[i]-allocation)&&(yu>=size[i]-allocation)){
+                yu=size[i]-allocation;
+                y=i;
+            }
+        }
+        if(yu>=0){
+            end[y]=end[y]-allocation;
+            size[y]=size[y]-allocation;
+            System.out.println("SUCCESS!! ADDRESS="+(end[y]+1));
+        }
+        else{
+            System.out.println("Too large application,Please reinput");
+        }
+    }
+    public void bac(){
+        Scanner input = new Scanner(System.in);
+        System.out.println("Input adr and size ");
+        int adress = input.nextInt();
+        int sizeable= input.nextInt();
+        for (int i = 0; a[i] != 0; i++) {
+            if((adress>=adr[i])&&(adress<end[i])){
+                System.out.println("Please reinput!");
+            }
+        }
+        for (int i = 0; a[i] != 0; i++) {
+            if ((adress == end[i] + 1) && ((end[i] + sizeable) < adr[i + 1])) {
+                end[i] = end[i] + sizeable;
+                size[i] = size[i] + sizeable;
+            }
+        }
+        for (int i = 0; a[i] != 0; i++) {
+            if ((adress == end[i] - 1) && ((end[i] + sizeable) > adr[i + 1])) {
+                System.out.println("Please reinput!");
+            }
+        }
+        if(adress>end[index-1]){
+            index=index+1;
+            a[index-1]=index;
+            adr[index-1]=adress;
+            end[index-1]=adress+sizeable-1;
+            size[index-1]=sizeable;
+        }
+    }
+    public void fas(){
+        Scanner input = new Scanner(System.in);
+        boolean storage=true;
+        System.out.println("input Application");
+        int allocation=input.nextInt();
+        for (int i=0;a[i]!=0;i++){
+            if(size[i]>=allocation){
+                end[i]=end[i]-allocation;
+                size[i]=size[i]-allocation;
+                storage=false;
+                System.out.println("SUCCESS!! ADDRESS="+(end[i]+1));
+                break;
+            }
+        }
+        if(storage){
+            System.out.println("Too large application,Please reinput");
+            fas();
+        }
+    }
+    public void fac() {
+        Scanner input = new Scanner(System.in);
+        System.out.println("Input adr and size ");
+        int adress = input.nextInt();
+        int sizeable= input.nextInt();
+        for (int i = 0; a[i] != 0; i++) {
+            if((adress>=adr[i])&&(adress<end[i])){
+                System.out.println("Please reinput!");
+            }
+        }
+        for (int i = 0; a[i] != 0; i++) {
+            if ((adress == end[i] + 1) && ((end[i] + sizeable) < adr[i + 1])) {
+                end[i] = end[i] + sizeable;
+                size[i] = size[i] + sizeable;
+            }
+        }
+        for (int i = 0; a[i] != 0; i++) {
+            if ((adress == end[i] - 1) && ((end[i] + sizeable) > adr[i + 1])) {
+                System.out.println("Please reinput!");
+            }
+        }
+        if(adress>end[index-1]){
+            index=index+1;
+            a[index-1]=index;
+            adr[index-1]=adress;
+            end[index-1]=adress+sizeable-1;
+            size[index-1]=sizeable;
+        }
+    }
+    public void print(){
+        System.out.println("index  *  adr  *  end  *  size  ");
+        for(int i=0;i<index;i++){
+            System.out.println("  "+a[i]+"        "+adr[i]+"     "+end[i]+"   "+size[i]);
+        }
+    }
+    int[] a = new int[10];
+    int[] adr = new int[10];
+    int[] end = new int[10];
+    int[] size = new int[10];
+    int index = 1;
+    int n = -1;
+}

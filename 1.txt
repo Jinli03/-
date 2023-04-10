@@ -1,0 +1,239 @@
+package process_control;
+
+import java.util.Scanner;
+
+public class Process_control1 {
+    public static void main(String args[]) {
+        Scanner input = new Scanner(System.in);
+        System.out.println("请输入要选择的算法1时间片/2优先级");
+        int choice = input.nextInt();
+        if (choice == 1) {
+            System.out.println("=================时间片轮转算法========================");
+            RR[] p;
+            System.out.println("请输入进程的个数");
+            int num = input.nextInt();
+            p = new RR[num];
+            System.out.println("请输入进程名称  服务时间");
+            for (int i = 0; i < p.length; i++) {
+                p[i] = new RR(input.next(), input.nextInt());
+            }
+            con(p);
+            println(p);
+
+        }
+        else {
+            System.out.println("=================优先数算法========================");
+            PCB[] p;
+            System.out.println("请输入进程的个数");
+            int num = input.nextInt();
+            p = new PCB[num];
+            System.out.println("请输入进程名称  服务时间");
+            for (int i = 0; i < p.length; i++) {
+                p[i] = new PCB(input.next(), input.nextInt());
+            }
+            le(p);
+        }
+    }
+        private static void le (PCB[]p){
+            sort(p);
+            run(p);
+
+        }
+        public static void sort (PCB[]p){
+            for(int y=0;y<p.length;y++){
+                p[y].pri=50-p[y].needtime;
+            }
+            for (int i = 0; i < p.length; i++) {
+                for (int j = i + 1; j < p.length; j++) {
+                    if (p[i].pri < p[j].pri) {
+                        PCB temp;
+                        temp = p[i];
+                        p[i] = p[j];
+                        p[j] = temp;
+                    }
+                }
+            }
+        }
+        private static void run (PCB[]p){
+            System.out.println("name  cputime   needtime   count   pri  state  ");
+            for (int k = 0; k < p.length; k++) {
+                if(k>=1) {
+                    p[k - 1].state = "F";
+                }
+                p[k].state="R";
+                printf(p,k);
+                System.out.printf("就绪队列为");
+                for(int j=0;j<p.length;j++){
+                    if(p[j].state=="W"){
+                        System.out.printf("%6s", p[j].name);
+                    }
+                }
+                System.out.println(" ");
+                System.out.printf("完成队列为");
+                for(int j=0;j<p.length;j++){
+                    if(p[j].state=="F"){
+                        System.out.printf("%6s", p[j].name);
+                    }
+                }
+                System.out.println(" ");
+                p[k].cputime=p[k].needtime;
+                p[k].needtime=0;
+                p[k].count=(p[k].cputime+1)/2;
+                if(p[k].count>=2){
+                    p[k].pri=p[k].pri-3*(p[k].count-1);
+                }
+                System.out.println(" ");
+            }
+            p[p.length-1].state="F";
+            p[p.length-1].cputime=p[p.length-1].needtime;
+            p[p.length-1].needtime=0;
+            p[p.length-1].count=(p[p.length-1].cputime+1)/2;
+            if(p[p.length-1].count>=2){
+                p[p.length-1].pri=p[p.length-1].pri-3*(p[p.length-1].count-1);
+            }
+            printf(p,p.length);
+            System.out.printf("就绪队列为");
+            for(int j=0;j<p.length;j++){
+                if(p[j].state=="W"){
+                    System.out.printf("%6s", p[j].name);
+                }
+            }
+            System.out.println(" ");
+            System.out.printf("完成队列为");
+            for(int j=0;j<p.length;j++){
+                if(p[j].state=="F"){
+                    System.out.printf("%6s", p[j].name);
+                }
+            }
+        }
+        private static void printf (PCB[]p,int y){
+           for(int x=y;x<p.length;x++){
+                System.out.printf("%6s", p[x].name);
+                System.out.printf("%6d", p[x].cputime);
+                System.out.printf("%6d", p[x].needtime);
+                System.out.printf("%6d", p[x].count);
+                System.out.printf("%6d", p[x].pri);
+                System.out.printf("%6s", p[x].state);
+                System.out.println(" ");
+            }
+            for(int x=0;x<y;x++){
+                System.out.printf("%6s", p[x].name);
+                System.out.printf("%6d", p[x].cputime);
+                System.out.printf("%6d", p[x].needtime);
+                System.out.printf("%6d", p[x].count);
+                System.out.printf("%6d", p[x].pri);
+                System.out.printf("%6s", p[x].state);
+                System.out.println(" ");
+            }
+        }
+        private static void con (RR[]p){
+            System.out.println("name  cputime   needtime   count   round  state  ");
+            for(int k = 0; (p[0].state=="W")||(p[1].state=="W")||(p[2].state=="W")||(p[3].state=="W")||(p[4].state=="W"); k++){
+                int d=k%5;
+                if(p[d].state=="F"){
+                    continue;
+                }
+                p[d].state="R";
+                printf(p,d);
+                System.out.printf("就绪队列为");
+                for(int j=0;j<p.length;j++){
+                    if(p[j].state=="W"){
+                        System.out.printf("%6s", p[j].name);
+                    }
+                }
+                System.out.println(" ");
+                System.out.printf("完成队列为");
+                for(int j=0;j<p.length;j++){
+                    if(p[j].state=="F"){
+                        System.out.printf("%6s", p[j].name);
+                    }
+                }
+                System.out.println(" ");
+                System.out.println(" ");
+                p[d].needtime=p[d].needtime-2;
+                if(p[d].needtime>0){
+                    p[d].cputime=p[d].cputime+2;
+                    p[d].state="W";
+                    p[d].count=p[d].count+1;
+                }
+                if(p[d].needtime<=0){
+                    p[d].cputime=p[d].needtime+2;
+                    p[d].needtime=0;
+                    p[d].state="F";
+                    p[d].count=p[d].count+1;
+                }
+            }
+    }
+        private static void printf (RR[]p,int y){
+            for(int x=y;x<p.length;x++) {
+                System.out.printf("%6s", p[x].name);
+                System.out.printf("%6d", p[x].cputime);
+                System.out.printf("%6d", p[x].needtime);
+                System.out.printf("%6d", p[x].count);
+                System.out.printf("%6d", p[x].round);
+                System.out.printf("%6s", p[x].state);
+                System.out.println(" ");
+            }
+            for(int x=0;x<y;x++){
+                System.out.printf("%6s", p[x].name);
+                System.out.printf("%6d", p[x].cputime);
+                System.out.printf("%6d", p[x].needtime);
+                System.out.printf("%6d", p[x].count);
+                System.out.printf("%6d", p[x].round);
+                System.out.printf("%6s", p[x].state);
+                System.out.println(" ");
+            }
+            System.out.println(" ");
+    }
+    private static void println(RR[]p){
+        for(int i=0;i<p.length;i++){
+            p[i].state="F";
+        }
+        for(int x=0;x<p.length;x++){
+            System.out.printf("%6s", p[x].name);
+            System.out.printf("%6d", p[x].cputime);
+            System.out.printf("%6d", p[x].needtime);
+            System.out.printf("%6d", p[x].count);
+            System.out.printf("%6d", p[x].round);
+            System.out.printf("%6s", p[x].state);
+            System.out.println(" ");
+        }
+        System.out.printf("就绪队列为");
+        for(int j=0;j<p.length;j++){
+            if(p[j].state=="W"){
+                System.out.printf("%6s", p[j].name);
+            }
+        }
+        System.out.println(" ");
+        System.out.printf("完成队列为");
+        for(int j=0;j<p.length;j++){
+            if(p[j].state=="F"){
+                System.out.printf("%6s", p[j].name);
+            }
+        }
+    }
+}
+ class PCB {
+    String name;
+    int cputime=0;
+    int needtime;
+    int count=0;
+    int pri ;
+    String state="W";
+    public PCB(String name, int needtime) {
+        this.name = name;
+        this.needtime = needtime;
+    }
+}
+ class RR {
+    String name;
+    int cputime=0;
+    int needtime;
+    int count=0;
+    int round=2;
+    String state="W";
+    public RR(String name, int needtime) {
+        this.name = name;
+        this.needtime = needtime;
+    }
+}
